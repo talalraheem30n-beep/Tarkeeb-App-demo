@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "name": "Chef Admin",
+    "password": "$2b$10$WDJ6.e.6gFxtnDwVqJB5e.KuviAhKyt9yQ.9w54oNJY7TnYNl0uYW",
+    "createdAt": "2026-05-02T00:00:00.000Z"
+  },
+  {
+    "id": 1777714163680,
+    "username": "testuser2",
+    "name": "Test User",
+    "password": "$2b$10$UsKsr5GeL0UBBmZV0qeBI.Azj3sm7AagOekgSclhxvAm7E2BuA7Z6",
+    "createdAt": "2026-05-02T09:29:23.680Z"
+  },
+  {
+    "id": 1777714295529,
+    "username": "chef 123",
+    "name": "talal raheem",
+    "password": "$2b$10$6CWRFt/bms3ZtwhPwoycKOZL/x4oUNjH8U0KqxIkSsyafvTY6g7Z6",
+    "createdAt": "2026-05-02T09:31:35.529Z"
+  }
+]

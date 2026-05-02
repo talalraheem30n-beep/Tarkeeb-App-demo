@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Simmr v2.0 — Dual-engine content parser. Extract recipes from links and screenshots with OCR-powered ingredient mapping and pantry inventory management." />
+  <title>Simmr v2.0 — Unified Input Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ─── HEADER ─── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo-group">
+        <svg class="logo-icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="2" y="2" width="24" height="24" rx="4" stroke="#6366f1" stroke-width="1.5"/>
+          <path d="M8 14h12M14 8v12" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="3" stroke="#22c55e" stroke-width="1.5"/>
+        </svg>
+        <h1 class="logo-text">Simmr<span class="version-tag">v2.0</span></h1>
+      </div>
+      <div class="engine-status" id="engineStatus">
+        <span class="status-dot"></span>
+        <span class="status-label">Dual Engine Active</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── STATE 1: UNIFIED INPUT PORTAL ─── -->
+  <main id="inputPortal" class="screen active">
+    <div class="portal-container">
+      <div class="portal-title-group">
+        <h2 class="section-title">Unified Input Portal</h2>
+        <p class="section-subtitle">Extract recipes from any source — paste a link or upload a screenshot.</p>
+      </div>
+
+      <div class="cards-grid">
+        <!-- PARSE LINK CARD -->
+        <div class="glass-card" id="parseLinkCard">
+          <div class="card-header">
+            <div class="card-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M8.5 11.5a4 4 0 005.657 0l3-3a4 4 0 00-5.657-5.657l-1.5 1.5" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M11.5 8.5a4 4 0 00-5.657 0l-3 3a4 4 0 005.657 5.657l1.5-1.5" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="card-title">PARSE LINK</h3>
+          </div>
+          <p class="card-desc">Paste a recipe URL — auto-detects Instagram, TikTok, YouTube.</p>
+          <div class="input-group">
+            <input type="url" id="urlInput" class="text-input" placeholder="https://instagram.com/p/..." autocomplete="off" />
+            <div class="platform-badges" id="platformBadges">
+              <span class="badge badge-inactive" data-platform="instagram">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.2"/><circle cx="10.5" cy="3.5" r="0.8" fill="currentColor"/></svg>
+                IG
+              </span>
+              <span class="badge badge-inactive" data-platform="tiktok">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 1v8a3 3 0 11-2-2.83" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M9 1c1.5.5 3 1.5 3.5 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                TT
+              </span>
+              <span class="badge badge-inactive" data-platform="youtube">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M6 6l3 1.5L6 9V6z" fill="currentColor"/></svg>
+                YT
+              </span>
+            </div>
+          </div>
+          <button class="btn-primary" id="btnParseLink">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Parse &amp; Extract
+          </button>
+        </div>
+
+        <!-- DECODE SCREENSHOT CARD -->
+        <div class="glass-card" id="decodeScreenshotCard">
+          <div class="card-header">
+            <div class="card-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="3" y="3" width="14" height="14" rx="2" stroke="#6366f1" stroke-width="1.5"/>
+                <path d="M3 13l4-4 3 3 2-2 5 5" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="7" r="1.5" stroke="#6366f1" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3 class="card-title">DECODE SCREENSHOT</h3>
+          </div>
+          <p class="card-desc">Drag &amp; drop or browse — OCR extracts text from recipe images.</p>
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            <div class="dropzone-inner" id="dropzoneInner">
+              <svg class="dropzone-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M16 6v14M10 14l6-6 6 6" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 22v2a2 2 0 002 2h16a2 2 0 002-2v-2" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span class="dropzone-text">Drop image here or <button class="link-btn" id="browseBtn">browse</button></span>
+              <span class="dropzone-hint">PNG, JPG, WEBP — max 10MB</span>
+            </div>
+            <!-- Preview replaces inner -->
+            <div class="dropzone-preview" id="dropzonePreview" style="display:none;">
+              <img id="previewImg" alt="Uploaded screenshot preview" />
+              <button class="preview-remove" id="previewRemove" title="Remove image">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="btn-primary" id="btnDecodeScreenshot" disabled>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Decode &amp; Extract
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ─── STATE 2: ACTIVE SCAN / HYBRID ENGINE ─── -->
+  <section id="activeScan" class="screen">
+    <div class="scan-container">
+      <div class="scan-header">
+        <h2 class="section-title">Hybrid OCR / URL Engine</h2>
+        <div class="scan-progress-wrap">
+          <div class="scan-progress-bar" id="scanProgressBar"></div>
+        </div>
+      </div>
+
+      <div class="scan-grid">
+        <!-- Image Scanner -->
+        <div class="scan-image-wrap glass-card">
+          <div class="scan-image-container" id="scanImageContainer">
+            <img id="scanImage" alt="Scanning content" />
+            <div class="cyber-scan-line" id="cyberScanLine"></div>
+            <div class="scan-overlay-corners">
+              <span class="corner tl"></span><span class="corner tr"></span>
+              <span class="corner bl"></span><span class="corner br"></span>
+            </div>
+          </div>
+          <div class="scan-label">
+            <span class="pulse-dot"></span>
+            <span>Processing…</span>
+          </div>
+        </div>
+
+        <!-- Terminal Feed -->
+        <div class="terminal-feed glass-card" id="terminalFeed">
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">EXTRACTION LOG</span>
+          </div>
+          <div class="terminal-body" id="terminalBody">
+            <!-- Lines injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATE 3: RESULT DASHBOARD ─── -->
+  <section id="resultDashboard" class="screen">
+    <div class="result-container">
+      <div class="result-header">
+        <div>
+          <h2 class="section-title">Recipe Dashboard</h2>
+          <p class="section-subtitle" id="recipeName">Chicken Tikka Masala</p>
+        </div>
+        <button class="btn-outline" id="btnNewScan">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8a6 6 0 0111.2-3M14 8a6 6 0 01-11.2 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 2v3h-3M2 14v-3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          New Scan
+        </button>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-value" id="statTotal">0</span>
+          <span class="stat-label">Total Items</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value stat-green" id="statInStock">0</span>
+          <span class="stat-label">In Stock</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value stat-red" id="statBuy">0</span>
+          <span class="stat-label">To Buy</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value stat-yellow" id="statLow">0</span>
+          <span class="stat-label">Low Stock</span>
+        </div>
+      </div>
+
+      <!-- Ingredients Table -->
+      <div class="ingredients-table glass-card" id="ingredientsTable">
+        <div class="table-header-row">
+          <span class="th-item">Ingredient</span>
+          <span class="th-qty">Qty</span>
+          <span class="th-lib">Library Match</span>
+          <span class="th-status">Pantry Status</span>
+          <span class="th-action">Action</span>
+        </div>
+        <div class="table-body" id="tableBody">
+          <!-- Rows injected by JS -->
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <div class="fab-group" id="fabGroup">
+        <button class="fab-toggle" id="fabToggle" title="Export options">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 5v12M5 11h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="fab-options" id="fabOptions">
+          <button class="fab-option" id="fabPdf">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 1h6l4 4v10H4z" stroke="currentColor" stroke-width="1.2"/><path d="M10 1v4h4" stroke="currentColor" stroke-width="1.2"/></svg>
+            Export PDF
+          </button>
+          <button class="fab-option" id="fabWhatsapp">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 9.5L4 13l3.5-1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M6 7a2 2 0 003 1.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            WhatsApp Shop
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

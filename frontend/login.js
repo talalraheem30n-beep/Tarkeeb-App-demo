@@ -10,14 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
     loginError.textContent = 'Google Sign-In is not configured yet. Use username & password.';
   } else if (urlParams.get('error') === 'google_failed') {
     loginError.textContent = 'Google Sign-In failed. Please try again.';
+  } else if (urlParams.get('error') === 'facebook_not_configured') {
+    loginError.textContent = 'Facebook Sign-In is not configured yet. Use username & password.';
+  } else if (urlParams.get('error') === 'facebook_failed') {
+    loginError.textContent = 'Facebook Sign-In failed. Please try again.';
   }
 
-  // Check Google config from server and disable button if not ready
+  // Check Google & Facebook config from server and disable buttons if not ready
   fetch('/api/config').then(r => r.json()).then(cfg => {
     const btnGoogle = document.getElementById('btnGoogle');
     if (!cfg.googleEnabled && btnGoogle) {
       btnGoogle.style.opacity = '0.5';
       btnGoogle.title = 'Google Sign-In not configured yet';
+    }
+    const btnFacebook = document.getElementById('btnFacebook');
+    if (!cfg.facebookEnabled && btnFacebook) {
+      btnFacebook.style.opacity = '0.5';
+      btnFacebook.title = 'Facebook Sign-In not configured yet';
     }
   }).catch(() => {});
 

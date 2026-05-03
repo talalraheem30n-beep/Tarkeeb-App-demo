@@ -153,6 +153,7 @@
     tab.addEventListener('click', () => {
       $$('.cat-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
+      const cat = tab.dataset.cat;
       const targetDishes = cat === 'all' ? allDishes.slice(5) : allDishes.filter(d => d.category === cat);
       renderDishGrid(targetDishes);
     });
@@ -206,6 +207,20 @@
     }
     fileInput.value = '';
   }
+
+  window.downloadIngredients = function(dishName, ingredientsStr) {
+    const text = `Ingredients for ${dishName}:\n\n${ingredientsStr}\n\nHappy Cooking with Tarkeeb!`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${dishName.replace(/\s+/g, '_')}_ingredients.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Ingredients list downloaded!');
+  };
 
   // ─── RECIPE PAGE ───
   async function loadDishById(id) {
@@ -346,8 +361,8 @@
           <div class="sidebar-widget">
             <h4 class="sidebar-widget-title">Love this recipe?</h4>
             <button class="sidebar-action-btn primary">★ Save Recipe</button>
-            <button class="sidebar-action-btn secondary">+ Add To Plan</button>
-            <button class="sidebar-action-btn secondary" onclick="window.open('https://www.foodpanda.pk/', '_blank')">🛒 Add To Shopping List</button>
+            <button class="sidebar-action-btn secondary" onclick="window.downloadIngredients('${dish.name}', \`${dish.ingredients.join('\\n').replace(/`/g, '\\`')}\`)">📥 Download Ingredients</button>
+            <button class="sidebar-action-btn secondary" onclick="window.open('https://www.foodpanda.pk/', '_blank')">🛒 Buy Ingredients Online</button>
           </div>
 
           <div class="sidebar-widget">
@@ -379,8 +394,8 @@
           <div class="sidebar-widget" style="background: linear-gradient(135deg, #e0f2f1, #e8eaf6); border: none;">
             <div style="font-size: 32px; margin-bottom: 12px;">🛒</div>
             <h4 class="sidebar-widget-title" style="margin-bottom: 8px;">Shop for your meal!</h4>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Ship to your local grocery store.</p>
-            <button class="sidebar-action-btn primary" style="font-size: 13px; padding: 12px;" onclick="window.open('https://www.foodpanda.pk/', '_blank')">Go to Store</button>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Order ingredients instantly via Foodpanda.</p>
+            <button class="sidebar-action-btn primary" style="font-size: 13px; padding: 12px;" onclick="window.open('https://www.foodpanda.pk/', '_blank')">Buy on Foodpanda</button>
           </div>
         </div>
 

@@ -5,6 +5,7 @@
   const fileInput = $('#fileInput');
   let allDishes = [];
   let lastPage = 'discover';
+  let currentRecipeDish = null;
 
   // Auth check
   fetch('/api/me').then(r => { if (!r.ok) window.location.href = '/'; return r.json(); })
@@ -208,19 +209,7 @@
     fileInput.value = '';
   }
 
-  window.downloadIngredients = function(dishName, ingredientsStr) {
-    const text = `Ingredients for ${dishName}:\n\n${ingredientsStr}\n\nHappy Cooking with Tarkeeb!`;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${dishName.replace(/\s+/g, '_')}_ingredients.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Ingredients list downloaded!');
-  };
+  // PDF download is handled by pdf-generator.js
 
   // ─── RECIPE PAGE ───
   async function loadDishById(id) {
@@ -235,6 +224,7 @@
   }
 
   function renderRecipe(dish, confidence, imagePath) {
+    currentRecipeDish = dish;
     const imgSrc = imagePath || dish.image;
     let heroImageHtml = '';
     
@@ -361,7 +351,7 @@
           <div class="sidebar-widget">
             <h4 class="sidebar-widget-title">Love this recipe?</h4>
             <button class="sidebar-action-btn primary">★ Save Recipe</button>
-            <button class="sidebar-action-btn secondary" onclick="window.downloadIngredients('${dish.name}', \`${dish.ingredients.join('\\n').replace(/`/g, '\\`')}\`)">📥 Download Ingredients</button>
+            <button class="sidebar-action-btn secondary" onclick="window.downloadRecipePDF(currentRecipeDish)">📥 Download Recipe PDF</button>
             <button class="sidebar-action-btn secondary" onclick="window.open('https://www.foodpanda.pk/', '_blank')">🛒 Buy Ingredients Online</button>
           </div>
 

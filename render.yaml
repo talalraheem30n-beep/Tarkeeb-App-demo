@@ -2,8 +2,21 @@ services:
   - type: web
     name: tarkeeb-app
     env: node
+    region: oregon
     buildCommand: npm install
     startCommand: npm start
     envVars:
-      - key: NODE_VERSION
-        value: 20.x
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true          # Render auto-generates a secure random value
+      - key: APP_URL
+        value: https://tarkeeb-app.onrender.com   # ← update to your actual Render URL
+      - key: GOOGLE_CLIENT_ID
+        sync: false                  # You'll paste this in Render dashboard
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: FACEBOOK_APP_ID
+        sync: false
+      - key: FACEBOOK_APP_SECRET
+        sync: false

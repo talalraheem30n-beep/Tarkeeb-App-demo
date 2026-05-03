@@ -33,11 +33,16 @@ function saveUsers(users) {
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
   secret: process.env.SESSION_SECRET || 'tarkeeb-secret-key-2026',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 }
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: isProduction,   // HTTPS only in production
+    sameSite: isProduction ? 'none' : 'lax'
+  }
 }));
 
 // Passport middleware
@@ -57,11 +62,13 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 const googleConfigured = process.env.GOOGLE_CLIENT_ID &&
   process.env.GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID_HERE';
 
+const APP_URL = process.env.APP_URL || '';
+
 if (googleConfigured) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/callback'
+    callbackURL: `${APP_URL}/auth/google/callback`
   }, (accessToken, refreshToken, profile, done) => {
     const users = loadUsers();
     let user = users.find(u => u.googleId === profile.id);
@@ -93,7 +100,7 @@ if (facebookConfigured) {
   passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: '/auth/facebook/callback',
+    callbackURL: `${APP_URL}/auth/facebook/callback`,
     profileFields: ['id', 'displayName', 'photos', 'email']
   }, (accessToken, refreshToken, profile, done) => {
     const users = loadUsers();
@@ -346,10 +353,12 @@ app.post('/api/analyze', requireAuth, upload.single('image'), (req, res) => {
 app.get('/', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
 app.get('/app', (req, res) => res.sendFile(path.join(frontendDir, 'app.html')));
 
-app.listen(PORT, () => {
+// Bind to 0.0.0.0 so cloud hosts (Render, Railway, Heroku) can route traffic
+app.listen(PORT, '0.0.0.0', () => {
+  const url = APP_URL || `http://localhost:${PORT}`;
   console.log(`\n🍛  Tarkeeb is running!`);
-  console.log(`   → http://localhost:${PORT}\n`);
+  console.log(`   → ${url}\n`);
   console.log(googleConfigured ? `   ✅ Google Sign-In: ENABLED` : `   ⚠️  Google Sign-In: DISABLED`);
-  console.log(facebookConfigured ? `   ✅ Facebook Sign-In: ENABLED` : `   ⚠️  Facebook Sign-In: DISABLED (add FACEBOOK_APP_ID & FACEBOOK_APP_SECRET to .env)`);
-  console.log(`   Default login: admin / admin123\n`);
+  console.log(facebookConfigured ? `   ✅ Facebook Sign-In: ENABLED` : `   ⚠️  Facebook Sign-In: DISABLED`);
+  console.log(`   Environment: ${isProduction ? 'production' : 'development'}\n`);
 });

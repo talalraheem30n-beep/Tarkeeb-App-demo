@@ -31,17 +31,23 @@ function saveUsers(users) {
 // Uploads directory removed (using memory storage)
 
 // Middleware
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Trust Render/Railway/Heroku reverse proxy so secure cookies work
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const isProduction = process.env.NODE_ENV === 'production';
 app.use(session({
   secret: process.env.SESSION_SECRET || 'tarkeeb-secret-key-2026',
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
-    secure: isProduction,   // HTTPS only in production
-    sameSite: isProduction ? 'none' : 'lax'
+    secure: isProduction,
+    sameSite: 'lax'
   }
 }));
 

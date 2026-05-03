@@ -5,7 +5,6 @@
   const fileInput = $('#fileInput');
   let allDishes = [];
   let lastPage = 'discover';
-  let currentRecipeDish = null;
 
   // Auth check
   fetch('/api/me').then(r => { if (!r.ok) window.location.href = '/'; return r.json(); })
@@ -224,7 +223,6 @@
   }
 
   function renderRecipe(dish, confidence, imagePath) {
-    currentRecipeDish = dish;
     const imgSrc = imagePath || dish.image;
     let heroImageHtml = '';
     
@@ -351,7 +349,7 @@
           <div class="sidebar-widget">
             <h4 class="sidebar-widget-title">Love this recipe?</h4>
             <button class="sidebar-action-btn primary">★ Save Recipe</button>
-            <button class="sidebar-action-btn secondary" onclick="window.downloadRecipePDF(currentRecipeDish)">📥 Download Recipe PDF</button>
+            <button class="sidebar-action-btn secondary" id="btnDownloadPDF">📥 Download Recipe PDF</button>
             <button class="sidebar-action-btn secondary" onclick="window.open('https://www.foodpanda.pk/', '_blank')">🛒 Buy Ingredients Online</button>
           </div>
 
@@ -390,6 +388,12 @@
         </div>
 
       </div>`;
+    
+    // Attach PDF listener
+    $('#btnDownloadPDF').onclick = () => {
+      if (window.downloadRecipePDF) window.downloadRecipePDF(dish);
+      else showToast('PDF Generator still loading...');
+    };
   }
 
   // Back button

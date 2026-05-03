@@ -60,15 +60,17 @@
     ).join('');
 
     const heroHtml = dish.image
-      ? '<div style="padding:24px 32px 0;"><img src="' + dish.image + '" style="width:100%;height:220px;object-fit:cover;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.1);" crossorigin="anonymous"></div>'
-      : '<div style="padding:24px 32px 0;"><div style="width:100%;height:180px;background:linear-gradient(135deg,#E91E63,#FF5722);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:80px;">' + dish.emoji + '</div></div>';
+      ? '<div style="padding:24px 32px 0;"><img src="' + dish.image + '" style="width:100%;height:220px;object-fit:cover;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.1);" crossorigin="anonymous" referrerpolicy="no-referrer"></div>'
+      : '<div style="padding:24px 32px 0;"><div style="width:100%;height:180px;background:linear-gradient(135deg,#E91E63,#FF5722);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:80px;">' + (dish.emoji || '🥘') + '</div></div>';
+
+    const nutrition = dish.nutrition || { calories: '-', protein: '-', carbs: '-', fat: '-', fiber: '-' };
 
     const html = [
       '<div style="width:210mm;min-height:297mm;font-family:Segoe UI,Arial,sans-serif;color:#1a1a2e;background:#fff;position:relative;overflow:hidden;">',
 
       // Watermark
       '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.04;z-index:0;pointer-events:none;">',
-        '<img src="' + logoUrl + '" style="width:300px;" crossorigin="anonymous">',
+        '<img src="' + logoUrl + '" style="width:300px;" crossorigin="anonymous" referrerpolicy="no-referrer">',
       '</div>',
 
       '<div style="position:relative;z-index:1;">',
@@ -76,7 +78,7 @@
       // Header
       '<div style="background:linear-gradient(135deg,#E91E63,#FF5722);padding:24px 32px;display:flex;align-items:center;justify-content:space-between;">',
         '<div style="display:flex;align-items:center;gap:12px;">',
-          '<img src="' + logoUrl + '" style="width:40px;height:40px;border-radius:8px;" crossorigin="anonymous">',
+          '<img src="' + logoUrl + '" style="width:40px;height:40px;border-radius:8px;" crossorigin="anonymous" referrerpolicy="no-referrer">',
           '<div><div style="color:#fff;font-size:22px;font-weight:800;">Tarkeeb</div>',
           '<div style="color:rgba(255,255,255,0.85);font-size:11px;">Recipe Card</div></div>',
         '</div>',
@@ -88,9 +90,9 @@
 
       // Title
       '<div style="padding:20px 32px 0;">',
-        '<span style="background:#E91E63;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;">' + dish.category + '</span>',
-        '<h1 style="font-size:28px;font-weight:800;margin:8px 0 6px;color:#1a1a2e;">' + dish.name + '</h1>',
-        '<p style="font-size:13px;color:#666;margin:0;line-height:1.5;">' + dish.description + '</p>',
+        '<span style="background:#E91E63;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;">' + (dish.category || 'Recipe') + '</span>',
+        '<h1 style="font-size:28px;font-weight:800;margin:8px 0 6px;color:#1a1a2e;">' + (dish.name || 'Untitled Recipe') + '</h1>',
+        '<p style="font-size:13px;color:#666;margin:0;line-height:1.5;">' + (dish.description || '') + '</p>',
       '</div>',
 
       // Stats
@@ -108,7 +110,7 @@
 
       // Ingredients
       '<div style="padding:8px 32px 0;">',
-        '<h3 style="font-size:16px;font-weight:800;margin:0 0 12px;">🧂 Ingredients <span style="font-size:12px;color:#888;font-weight:400;">(' + dish.ingredients.length + ' items)</span></h3>',
+        '<h3 style="font-size:16px;font-weight:800;margin:0 0 12px;">🧂 Ingredients <span style="font-size:12px;color:#888;font-weight:400;">(' + (dish.ingredients ? dish.ingredients.length : 0) + ' items)</span></h3>',
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' + ingredientsHtml + '</div>',
       '</div>',
 
@@ -122,18 +124,18 @@
       '<div style="padding:16px 32px 0;">',
         '<h3 style="font-size:16px;font-weight:800;margin:0 0 12px;">📊 Nutrition Per Serving</h3>',
         '<div style="display:flex;gap:8px;">',
-          '<div style="flex:1;background:#fff8e1;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#E91E63;">' + dish.nutrition.calories + '</div><div style="font-size:10px;color:#888;">Calories</div></div>',
-          '<div style="flex:1;background:#e8f5e9;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#2e7d32;">' + dish.nutrition.protein + 'g</div><div style="font-size:10px;color:#888;">Protein</div></div>',
-          '<div style="flex:1;background:#e3f2fd;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#1565c0;">' + dish.nutrition.carbs + 'g</div><div style="font-size:10px;color:#888;">Carbs</div></div>',
-          '<div style="flex:1;background:#fce4ec;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#c62828;">' + dish.nutrition.fat + 'g</div><div style="font-size:10px;color:#888;">Fat</div></div>',
-          '<div style="flex:1;background:#f3e5f5;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#7b1fa2;">' + dish.nutrition.fiber + 'g</div><div style="font-size:10px;color:#888;">Fiber</div></div>',
+          '<div style="flex:1;background:#fff8e1;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#E91E63;">' + nutrition.calories + '</div><div style="font-size:10px;color:#888;">Calories</div></div>',
+          '<div style="flex:1;background:#e8f5e9;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#2e7d32;">' + (nutrition.protein || '-') + (nutrition.protein ? 'g' : '') + '</div><div style="font-size:10px;color:#888;">Protein</div></div>',
+          '<div style="flex:1;background:#e3f2fd;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#1565c0;">' + (nutrition.carbs || '-') + (nutrition.carbs ? 'g' : '') + '</div><div style="font-size:10px;color:#888;">Carbs</div></div>',
+          '<div style="flex:1;background:#fce4ec;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#c62828;">' + (nutrition.fat || '-') + (nutrition.fat ? 'g' : '') + '</div><div style="font-size:10px;color:#888;">Fat</div></div>',
+          '<div style="flex:1;background:#f3e5f5;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:18px;font-weight:800;color:#7b1fa2;">' + (nutrition.fiber || '-') + (nutrition.fiber ? 'g' : '') + '</div><div style="font-size:10px;color:#888;">Fiber</div></div>',
         '</div>',
       '</div>',
 
       // Footer
       '<div style="padding:24px 32px;margin-top:16px;border-top:2px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">',
         '<div style="display:flex;align-items:center;gap:8px;">',
-          '<img src="' + logoUrl + '" style="width:20px;height:20px;border-radius:4px;" crossorigin="anonymous">',
+          '<img src="' + logoUrl + '" style="width:20px;height:20px;border-radius:4px;" crossorigin="anonymous" referrerpolicy="no-referrer">',
           '<span style="font-size:11px;color:#aaa;">Generated by <strong style="color:#E91E63;">Tarkeeb</strong></span>',
         '</div>',
         '<span style="font-size:10px;color:#ccc;">Scan · Discover · Cook</span>',

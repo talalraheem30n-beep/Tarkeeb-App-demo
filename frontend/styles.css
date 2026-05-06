@@ -63,13 +63,13 @@ body{font-family:var(--font);background:var(--bg-main);color:var(--text-primary)
 .nav-brand{display:flex;align-items:center;gap:8px}
 .nav-logo-img{height:40px;width:auto}
 .nav-links{display:flex;gap:4px}
-.nav-link{display:flex;align-items:center;gap:6px;padding:8px 20px;border-radius:var(--radius-btn);font-size:14px;font-weight:600;color:var(--text-secondary);text-decoration:none;transition:all var(--transition)}
+.nav-link{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--radius-btn);font-size:13px;font-weight:600;color:var(--text-secondary);text-decoration:none;transition:all var(--transition);white-space:nowrap}
 .nav-link:hover{background:var(--tag-bg);color:var(--text-primary)}
 .nav-link.active{background:rgba(216,27,96,0.08);color:var(--accent-brand)}
-.nav-icon{font-size:18px}
-.nav-user{display:flex;align-items:center;gap:12px}
-.nav-username{font-size:13px;font-weight:500;color:var(--text-secondary)}
-.btn-logout{background:none;border:1px solid var(--border-light);border-radius:8px;padding:6px 14px;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all var(--transition)}
+.nav-icon{font-size:16px}
+.nav-user{display:flex;align-items:center;gap:6px}
+.nav-username{font-size:12px;font-weight:500;color:var(--text-secondary)}
+.btn-logout{background:none;border:1px solid var(--border-light);border-radius:8px;padding:6px 10px;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all var(--transition)}
 .btn-logout:hover{border-color:var(--accent-brand);color:var(--accent-brand)}
 
 /* ═══ PAGES ═══ */
@@ -244,20 +244,53 @@ body{font-family:var(--font);background:var(--bg-main);color:var(--text-primary)
 @keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.05)}70%{transform:scale(0.95)}100%{transform:scale(1);opacity:1}}
 
 /* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .recipe-container { display: flex; flex-direction: column; gap: 24px; }
+  .recipe-sidebar { position: static; order: 2; width: 100%; }
+  .recipe-main { order: 1; width: 100%; }
+}
+
 @media(max-width:900px){
   .login-page{flex-direction:column}.login-hero{min-height:35vh;flex:none;padding:32px}.login-right{flex:1;padding:32px}
   .hero-tagline{font-size:28px}
 }
+
 @media(max-width:768px){
-  .nav-inner{padding:0 16px}.nav-links{gap:0}
-  .nav-link{padding:8px 12px;font-size:13px}.nav-username{display:none}
-  .page-container{padding:24px 16px}
-  .dish-grid{grid-template-columns:1fr 1fr;gap:12px}
-  .dish-card{padding:20px 16px}
-  .upload-hero-card{padding:32px 24px}
-  .result-body{padding:24px}
+  .top-nav { padding: 0 12px; }
+  .nav-inner { gap: 4px; height: 56px; }
+  .nav-logo-img { height: 32px; }
+  .nav-links { gap: 0; }
+  .nav-link { padding: 8px 8px; font-size: 11px; gap: 4px; }
+  .nav-link span:not(.nav-icon) { display: none; } /* Hide text on mobile nav */
+  .nav-icon { font-size: 20px; }
+  .nav-username { display: none; }
+  
+  .page-container{padding:20px 12px}
+  
+  .recipe-hero-wrapper { height: 260px; }
+  .recipe-header-content { padding: 20px 20px 12px; }
+  .recipe-title-new { font-size: 24px; }
+  .recipe-stats-row { padding: 16px 20px; gap: 16px 32px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; }
+  .recipe-stat { align-items: center; }
+  .recipe-stat-value { font-size: 18px; }
+  .recipe-stat-label { font-size: 10px; }
+  .recipe-section-box { padding: 0 20px 24px; }
+  .recipe-h3 { font-size: 18px; margin-bottom: 16px; }
+  
+  .sidebar-widget { padding: 20px; }
+  .sidebar-action-btn { padding: 12px; font-size: 13px; }
+  
+  .dish-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .dish-card{padding:16px 12px}
+  .upload-hero-card{padding:24px 16px}
+  .result-body{padding:20px}
   .nutrition-pill{min-width:calc(50% - 6px)}
 }
+
 @media(max-width:480px){
   .dish-grid{grid-template-columns:1fr}
+  .recipe-stats-row { gap: 16px; }
+  .recipe-stat { flex: 1 1 40%; }
+  .nav-link span:not(.nav-icon) { display: none; }
+  .nav-link { padding: 8px; }
 }

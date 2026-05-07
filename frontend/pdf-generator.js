@@ -145,27 +145,57 @@
     ].join('');
 
     const el = document.createElement('div');
-    el.style.cssText = 'position:fixed;left:-9999px;top:0;';
+    el.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:210mm;';
     el.innerHTML = html;
     document.body.appendChild(el);
 
     // Show generating toast
     const toast = document.querySelector('.toast');
-    if (toast) { toast.textContent = 'Generating PDF…'; toast.classList.add('show'); }
+    if (toast) { toast.textContent = 'Preparing PDF…'; toast.classList.add('show'); }
 
-    html2pdf().set({
-      margin: 0,
-      filename: dish.name.replace(/\s+/g, '_') + '_Recipe_Tarkeeb.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(el.firstElementChild).save().then(function() {
-      document.body.removeChild(el);
-      if (toast) { toast.textContent = 'Recipe PDF downloaded! 🎉'; setTimeout(function() { toast.classList.remove('show'); }, 2500); }
-    }).catch(function() {
-      document.body.removeChild(el);
-      if (toast) { toast.textContent = 'PDF failed. Try again.'; setTimeout(function() { toast.classList.remove('show'); }, 2500); }
+    // Helper to wait for images
+    const waitForImages = () => {
+      const images = el.querySelectorAll('img');
+      const promises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      });
+      return Promise.all(promises);
+    };
+
+    // Wait for images and a small buffer for layout
+    waitForImages().then(() => {
+      if (toast) toast.textContent = 'Generating PDF…';
+      
+      // Small timeout to ensure browser has painted the element
+      setTimeout(() => {
+        html2pdf().set({
+          margin: 0,
+          filename: dish.name.replace(/\s+/g, '_') + '_Recipe_Tarkeeb.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            allowTaint: true, 
+            logging: false,
+            letterRendering: true,
+            scrollX: 0,
+            scrollY: 0
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        }).from(el.firstElementChild).save().then(function() {
+          document.body.removeChild(el);
+          if (toast) { toast.textContent = 'Recipe PDF downloaded! 🎉'; setTimeout(function() { toast.classList.remove('show'); }, 2500); }
+        }).catch(function(err) {
+          console.error('PDF Generation Error:', err);
+          document.body.removeChild(el);
+          if (toast) { toast.textContent = 'PDF failed. Try again.'; setTimeout(function() { toast.classList.remove('show'); }, 2500); }
+        });
+      }, 500);
     });
   };
 })();

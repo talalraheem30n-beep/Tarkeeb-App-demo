@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const dishes = require('./data/dishes');
@@ -40,6 +41,14 @@ if (isProduction) {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per window
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+app.use('/api/', apiLimiter);
 app.use(session({
   secret: process.env.SESSION_SECRET || 'tarkeeb-secret-key-2026',
   resave: false,
@@ -62,7 +71,14 @@ app.use(express.static(frontendDir));
 
 // Multer config using memoryStorage
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 }, fileFilter });
 
 // --- Passport: Google OAuth Strategy ---
 const googleConfigured = process.env.GOOGLE_CLIENT_ID &&
@@ -317,9 +333,9 @@ app.post('/api/analyze', requireAuth, upload.single('image'), (req, res) => {
           if (word.length >= 3 && kw.toLowerCase().includes(word)) {
             score += 2;
           } else {
-             const dist = getEditDistance(word, kw.toLowerCase());
-             if (dist <= 2 && kw.length > 4) score += 2;
-             else if (dist <= 1 && kw.length <= 4) score += 2;
+            const dist = getEditDistance(word, kw.toLowerCase());
+            if (dist <= 2 && kw.length > 4) score += 2;
+            else if (dist <= 1 && kw.length <= 4) score += 2;
           }
         }
       }
@@ -341,11 +357,11 @@ app.post('/api/analyze', requireAuth, upload.single('image'), (req, res) => {
         steps: bestMatch.steps || []
       });
     } else {
-      return res.json({ 
+      return res.json({
         matched: false,
         confidence: 0,
         analyzedFilename: req.file.originalname,
-        message: 'Could not identify the dish. Try naming your image like "biryani.jpg" or "burger.png".' 
+        message: 'Could not identify the dish. Try naming your image like "biryani.jpg" or "burger.png".'
       });
     }
   } catch (error) {

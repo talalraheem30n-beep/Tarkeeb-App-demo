@@ -148,16 +148,50 @@
     });
   }
 
+  // Filter function for search and category
+  function applyFilters() {
+    const activeTab = $('.cat-tab.active');
+    const cat = activeTab ? activeTab.dataset.cat : 'all';
+    const query = $('#searchInput') ? $('#searchInput').value.toLowerCase().trim() : '';
+
+    let filtered = allDishes;
+
+    // Search text filter
+    if (query) {
+      filtered = filtered.filter(d => 
+        (d.name && d.name.toLowerCase().includes(query)) || 
+        (d.description && d.description.toLowerCase().includes(query)) ||
+        (d.ingredients && d.ingredients.some(i => i.toLowerCase().includes(query)))
+      );
+    } else {
+      // If no query and cat is all, slice first 5 (hero recipes)
+      if (cat === 'all') {
+        filtered = filtered.slice(5);
+      }
+    }
+
+    // Category filter
+    if (cat !== 'all') {
+      filtered = filtered.filter(d => d.category === cat);
+    }
+
+    renderDishGrid(filtered);
+  }
+
   // Category filter tabs
   $$('.cat-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       $$('.cat-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      const cat = tab.dataset.cat;
-      const targetDishes = cat === 'all' ? allDishes.slice(5) : allDishes.filter(d => d.category === cat);
-      renderDishGrid(targetDishes);
+      applyFilters();
     });
   });
+
+  // Search input event
+  const searchInput = $('#searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
 
   // Quick picks on upload page
   function renderQuickPicks(dishes) {
@@ -242,7 +276,8 @@
     }
 
     // Dynamic placeholders for time and cost based on data
-    const prepTime = (dish.ingredients.length * 3 + 5) + ' mins';
+    const prepTime = dish.prepTime || ((dish.ingredients.length * 3 + 5) + ' mins');
+    const difficulty = dish.difficulty || 'Medium';
     
     // Realistic PKR estimates based on latest market data for the dishes
     const mealCostsPKR = {
@@ -324,8 +359,8 @@
               <span class="recipe-stat-label">Est. Meal Cost</span>
             </div>
             <div class="recipe-stat">
-              <span class="recipe-stat-value">${dish.nutrition.serving.split(' ')[0] || '1'}</span>
-              <span class="recipe-stat-label">Servings</span>
+              <span class="recipe-stat-value">${difficulty}</span>
+              <span class="recipe-stat-label">Difficulty</span>
             </div>
           </div>
 
